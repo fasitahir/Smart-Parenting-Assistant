@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ViewChildrenPage extends StatefulWidget {
-  ViewChildrenPage();
+  const ViewChildrenPage({super.key});
 
   @override
   _ViewChildrenPageState createState() => _ViewChildrenPageState();
@@ -40,18 +40,18 @@ class _ViewChildrenPageState extends State<ViewChildrenPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Children List'),
+        title: const Text('Children List'),
         backgroundColor: Colors.blue,
       ),
       body: FutureBuilder<List<dynamic>>(
         future: _childrenFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text('No children found.'));
+            return const Center(child: Text('No children found.'));
           } else {
             final children = snapshot.data!;
             return ListView.builder(
@@ -59,11 +59,11 @@ class _ViewChildrenPageState extends State<ViewChildrenPage> {
               itemBuilder: (context, index) {
                 final child = children[index];
                 return Card(
-                  margin: EdgeInsets.all(8),
+                  margin: const EdgeInsets.all(8),
                   child: ListTile(
                     title: Text(
                       child['name'],
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                     subtitle: Text(
                       'DOB: ${child['date_of_birth']}\n'
@@ -72,7 +72,7 @@ class _ViewChildrenPageState extends State<ViewChildrenPage> {
                       'Height: ${child['height']} ft\n'
                       'Allergies: ${child['allergies']}',
                     ),
-                    trailing: Icon(Icons.child_care, color: Colors.blue),
+                    trailing: const Icon(Icons.child_care, color: Colors.blue),
                   ),
                 );
               },

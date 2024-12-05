@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'Child_Management/add_profile.dart';
 import 'Child_Management/view_profile.dart';
+import 'Child_Management/update_profile.dart';
 
 void main() {
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -17,6 +20,8 @@ class MyApp extends StatelessWidget {
 }
 
 class Dashboard extends StatefulWidget {
+  const Dashboard({super.key});
+
   @override
   _DashboardState createState() => _DashboardState();
 }
@@ -34,7 +39,7 @@ class _DashboardState extends State<Dashboard> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           "Smart Parenting",
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
@@ -42,7 +47,7 @@ class _DashboardState extends State<Dashboard> {
       ),
       body: Container(
         color: Colors.grey[100],
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -50,19 +55,19 @@ class _DashboardState extends State<Dashboard> {
             ElevatedButton.icon(
               onPressed: () {
                 showModalBottomSheet(
-                  shape: RoundedRectangleBorder(
+                  shape: const RoundedRectangleBorder(
                     borderRadius:
                         BorderRadius.vertical(top: Radius.circular(20)),
                   ),
                   context: context,
                   builder: (BuildContext context) {
                     return Container(
-                      padding: EdgeInsets.all(20),
+                      padding: const EdgeInsets.all(20),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
+                          const Text(
                             "Manage Child",
                             style: TextStyle(
                               color: Colors.black,
@@ -70,10 +75,10 @@ class _DashboardState extends State<Dashboard> {
                               fontSize: 18,
                             ),
                           ),
-                          SizedBox(height: 10),
+                          const SizedBox(height: 10),
                           ListTile(
-                            leading: Icon(Icons.add, color: Colors.blue),
-                            title: Text('Add Child'),
+                            leading: const Icon(Icons.add, color: Colors.blue),
+                            title: const Text('Add Child'),
                             onTap: () {
                               Navigator.pop(context);
                               Navigator.push(
@@ -83,25 +88,29 @@ class _DashboardState extends State<Dashboard> {
                                 ),
                               );
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text("Add Child Selected")),
+                                const SnackBar(
+                                    content: Text("Add Child Selected")),
                               );
                             },
                           ),
                           ListTile(
-                            leading: Icon(Icons.update, color: Colors.orange),
-                            title: Text('Update/Delete Child'),
+                            leading:
+                                const Icon(Icons.update, color: Colors.orange),
+                            title: const Text('Update/Delete Child'),
                             onTap: () {
                               Navigator.pop(context);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                    content:
-                                        Text("Update/Delete Child Selected")),
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => UpdateDeleteChildPage(),
+                                ),
                               );
                             },
                           ),
                           ListTile(
-                            leading: Icon(Icons.person, color: Colors.green),
-                            title: Text('View Child Profile'),
+                            leading:
+                                const Icon(Icons.person, color: Colors.green),
+                            title: const Text('View Child Profile'),
                             onTap: () {
                               Navigator.pop(context);
                               Navigator.push(
@@ -111,7 +120,7 @@ class _DashboardState extends State<Dashboard> {
                                 ),
                               );
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
+                                const SnackBar(
                                     content:
                                         Text("View Child Profile Selected")),
                               );
@@ -123,39 +132,39 @@ class _DashboardState extends State<Dashboard> {
                   },
                 );
               },
-              icon: Icon(Icons.manage_accounts),
-              label: Text("Manage Child"),
+              icon: const Icon(Icons.manage_accounts),
+              label: const Text("Manage Child"),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blueAccent,
                 foregroundColor: Colors.white, // Text color
-                padding: EdgeInsets.symmetric(vertical: 15),
+                padding: const EdgeInsets.symmetric(vertical: 15),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15),
                 ),
-                textStyle: TextStyle(fontSize: 18),
-                minimumSize: Size(double.infinity, 50),
+                textStyle: const TextStyle(fontSize: 18),
+                minimumSize: const Size(double.infinity, 50),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
             // "Growth Monitor" button
             ElevatedButton.icon(
               onPressed: () {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("Growth Monitor Selected")),
+                  const SnackBar(content: Text("Growth Monitor Selected")),
                 );
               },
-              icon: Icon(Icons.monitor_weight),
-              label: Text("Growth Monitor"),
+              icon: const Icon(Icons.monitor_weight),
+              label: const Text("Growth Monitor"),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green,
                 foregroundColor: Colors.white, // Text color
-                padding: EdgeInsets.symmetric(vertical: 15),
+                padding: const EdgeInsets.symmetric(vertical: 15),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15),
                 ),
-                textStyle: TextStyle(fontSize: 18),
-                minimumSize: Size(double.infinity, 50),
+                textStyle: const TextStyle(fontSize: 18),
+                minimumSize: const Size(double.infinity, 50),
               ),
             ),
           ],

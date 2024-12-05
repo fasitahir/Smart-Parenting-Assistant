@@ -66,6 +66,7 @@ async def update_child(child_id: str, updated_child: ChildModel):
 
 @router.delete("/{child_id}", response_model=dict)
 async def delete_child(child_id: str):
+    print(f"Deleting child with ID: {child_id}")
     result = children_collection.delete_one({"_id": ObjectId(child_id)})
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Child not found")

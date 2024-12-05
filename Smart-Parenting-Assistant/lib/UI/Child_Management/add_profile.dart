@@ -4,6 +4,8 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AddChildPage extends StatefulWidget {
+  const AddChildPage({super.key});
+
   @override
   _AddChildPageState createState() => _AddChildPageState();
 }
@@ -50,7 +52,7 @@ class _AddChildPageState extends State<AddChildPage> {
       );
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Child added successfully!")),
+        const SnackBar(content: Text("Child added successfully!")),
       );
 
       // Clear the form or navigate back
@@ -93,24 +95,24 @@ class _AddChildPageState extends State<AddChildPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           "Add Child",
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.indigo,
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Form(
           key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              const Text(
                 "Enter Child Details",
                 style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
 
               // Name Field
               TextFormField(
@@ -130,7 +132,7 @@ class _AddChildPageState extends State<AddChildPage> {
                   _name = value;
                 },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
 
               // Date of Birth Field
               TextFormField(
@@ -140,7 +142,7 @@ class _AddChildPageState extends State<AddChildPage> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  suffixIcon: Icon(Icons.calendar_today),
+                  suffixIcon: const Icon(Icons.calendar_today),
                 ),
                 readOnly: true,
                 onTap: () async {
@@ -165,7 +167,7 @@ class _AddChildPageState extends State<AddChildPage> {
                   return null;
                 },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
 
               // Gender Field
               DropdownButtonFormField<String>(
@@ -189,7 +191,7 @@ class _AddChildPageState extends State<AddChildPage> {
                   return null;
                 },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
 
               // Allergies Field (Dropdown)
               DropdownButtonFormField<String>(
@@ -215,7 +217,7 @@ class _AddChildPageState extends State<AddChildPage> {
                   return null;
                 },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
 
               // Weight Field
               TextFormField(
@@ -236,7 +238,7 @@ class _AddChildPageState extends State<AddChildPage> {
                   _weight = double.parse(value!);
                 },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
 
               // Height Field
               TextFormField(
@@ -257,21 +259,21 @@ class _AddChildPageState extends State<AddChildPage> {
                   _height = double.parse(value!);
                 },
               ),
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
 
               // Submit Button
               ElevatedButton(
                 onPressed: _submitForm,
-                child: Text("Add Child"),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.indigo,
                   foregroundColor: Colors.white,
-                  padding: EdgeInsets.symmetric(vertical: 15),
+                  padding: const EdgeInsets.symmetric(vertical: 15),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15),
                   ),
-                  textStyle: TextStyle(fontSize: 18),
+                  textStyle: const TextStyle(fontSize: 18),
                 ),
+                child: Text("Add Child"),
               ),
             ],
           ),

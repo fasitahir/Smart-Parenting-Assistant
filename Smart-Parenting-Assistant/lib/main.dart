@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import './UI/Registration/login_screen.dart'; // Ensure you import your LoginScreen
+import './UI/Registration/login_screen.dart';
 
 void main() {
   runApp(const MyApp());
