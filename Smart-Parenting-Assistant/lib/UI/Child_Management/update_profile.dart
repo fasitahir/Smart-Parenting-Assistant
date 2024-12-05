@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -90,6 +91,23 @@ class _UpdateDeleteChildPageState extends State<UpdateDeleteChildPage> {
     final TextEditingController allergiesController =
         TextEditingController(text: child['allergies']);
 
+    String? gender = child['gender'];
+    String? selectedAllergy = child['allergies'];
+
+    // List of common allergies in babies (same as in AddChildPage)
+    final List<String> allergyOptions = [
+      "None",
+      "Dairy",
+      "Eggs",
+      "Peanuts",
+      "Shellfish",
+      "Soy",
+      "Wheat",
+      "Tree nuts",
+      "Dust mites",
+      "Pet dander"
+    ];
+
     showDialog(
       context: context,
       builder: (context) {
@@ -98,27 +116,78 @@ class _UpdateDeleteChildPageState extends State<UpdateDeleteChildPage> {
           content: SingleChildScrollView(
             child: Column(
               children: [
+                // Name Field
                 TextField(
                   controller: nameController,
                   decoration: const InputDecoration(labelText: 'Name'),
                 ),
+                const SizedBox(height: 10),
+
+                // Date of Birth Field
                 TextField(
                   controller: dobController,
                   decoration: const InputDecoration(labelText: 'Date of Birth'),
+                  readOnly: true,
+                  onTap: () async {
+                    DateTime? pickedDate = await showDatePicker(
+                      context: context,
+                      initialDate: DateTime.parse(child['date_of_birth']),
+                      firstDate: DateTime(2000),
+                      lastDate: DateTime.now(),
+                    );
+                    if (pickedDate != null) {
+                      dobController.text =
+                          "${pickedDate.year}-${pickedDate.month}-${pickedDate.day}";
+                    }
+                  },
                 ),
+                const SizedBox(height: 10),
+
+                // Gender Dropdown
+                DropdownButtonFormField<String>(
+                  value: gender,
+                  decoration: const InputDecoration(labelText: 'Gender'),
+                  items: ["Male", "Female", "Other"]
+                      .map((gender) => DropdownMenuItem(
+                            value: gender,
+                            child: Text(gender),
+                          ))
+                      .toList(),
+                  onChanged: (value) {
+                    gender = value;
+                  },
+                ),
+                const SizedBox(height: 10),
+
+                // Allergies Dropdown
+                DropdownButtonFormField<String>(
+                  value: selectedAllergy,
+                  decoration: const InputDecoration(labelText: 'Allergies'),
+                  items: allergyOptions
+                      .map((allergy) => DropdownMenuItem(
+                            value: allergy,
+                            child: Text(allergy),
+                          ))
+                      .toList(),
+                  onChanged: (value) {
+                    selectedAllergy = value;
+                  },
+                ),
+                const SizedBox(height: 10),
+
+                // Weight Field
                 TextField(
                   controller: weightController,
                   decoration: const InputDecoration(labelText: 'Weight (kg)'),
                   keyboardType: TextInputType.number,
                 ),
+                const SizedBox(height: 10),
+
+                // Height Field
                 TextField(
                   controller: heightController,
                   decoration: const InputDecoration(labelText: 'Height (ft)'),
                   keyboardType: TextInputType.number,
-                ),
-                TextField(
-                  controller: allergiesController,
-                  decoration: const InputDecoration(labelText: 'Allergies'),
                 ),
               ],
             ),
@@ -131,14 +200,22 @@ class _UpdateDeleteChildPageState extends State<UpdateDeleteChildPage> {
               child: const Text('Cancel'),
             ),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                String? parentId = prefs.getString('userId');
+                if (kDebugMode) {
+                  print(allergiesController.text);
+                }
                 final updatedData = {
                   'name': nameController.text,
                   'date_of_birth': dobController.text,
+                  'gender': gender,
                   'weight': double.tryParse(weightController.text) ?? 0,
                   'height': double.tryParse(heightController.text) ?? 0,
-                  'allergies': allergiesController.text,
+                  'allergies': selectedAllergy,
+                  'parentId': parentId
                 };
+
                 updateChild(child['id'], updatedData);
                 Navigator.pop(context);
               },
