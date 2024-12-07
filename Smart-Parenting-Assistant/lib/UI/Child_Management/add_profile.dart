@@ -273,7 +273,7 @@ class _AddChildPageState extends State<AddChildPage> {
                   ),
                   textStyle: const TextStyle(fontSize: 18),
                 ),
-                child: Text("Add Child"),
+                child: const Text("Add Child"),
               ),
             ],
           ),

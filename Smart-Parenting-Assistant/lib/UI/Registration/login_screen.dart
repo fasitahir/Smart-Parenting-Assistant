@@ -60,7 +60,7 @@ class _LoginScreenState extends State<LoginScreen> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-            builder: (context) => Dashboard()), // Navigate to Dashboard
+            builder: (context) => const Dashboard()), // Navigate to Dashboard
       );
     } else {
       final message = jsonDecode(response.body)["detail"];

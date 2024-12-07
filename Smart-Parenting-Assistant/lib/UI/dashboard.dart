@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'Child_Management/add_profile.dart';
 import 'Child_Management/view_profile.dart';
 import 'Child_Management/update_profile.dart';
+import 'Reminder/view_reminders.dart';
+import 'Reminder/add_reminder.dart';
+import 'Reminder/update_reminder.dart';
+import 'Nutrition/nutritionAssist.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -12,7 +16,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Dashboard(),
     );
@@ -28,11 +32,43 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   int _selectedIndex = 0;
+  String _selectedReminderPage = "View Reminders"; // Initial selection
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  void _onReminderPageSelected(String? value) {
+    if (value != null) {
+      // Only update the state if the value is different
+      setState(() {
+        _selectedReminderPage = value;
+      });
+
+      // Navigate to the selected reminder page
+      switch (value) {
+        case "Add Reminder":
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const AddReminderPage()),
+          );
+          break;
+        case "Update Reminder":
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const UpdateReminderPage()),
+          );
+          break;
+        case "View Reminders":
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const ViewRemindersPage()),
+          );
+          break;
+      }
+    }
   }
 
   @override
@@ -44,6 +80,30 @@ class _DashboardState extends State<Dashboard> {
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.blueAccent,
+        actions: [
+          // Keep the DropdownButton value consistent
+          DropdownButton<String>(
+            value: _selectedReminderPage, // This stays the same
+            icon: const Icon(Icons.notifications, color: Colors.white),
+            dropdownColor: Colors.white,
+            items: const [
+              DropdownMenuItem(
+                value: "View Reminders",
+                child: Text("View Reminders"),
+              ),
+              DropdownMenuItem(
+                value: "Add Reminder",
+                child: Text("Add Reminder"),
+              ),
+              DropdownMenuItem(
+                value: "Update Reminder",
+                child: Text("Update Reminder"),
+              ),
+            ],
+            onChanged:
+                _onReminderPageSelected, // Only updates when an option is selected
+          ),
+        ],
       ),
       body: Container(
         color: Colors.grey[100],
@@ -51,7 +111,6 @@ class _DashboardState extends State<Dashboard> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // "Manage Child" button
             ElevatedButton.icon(
               onPressed: () {
                 showModalBottomSheet(
@@ -84,7 +143,7 @@ class _DashboardState extends State<Dashboard> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => AddChildPage(),
+                                  builder: (context) => const AddChildPage(),
                                 ),
                               );
                               ScaffoldMessenger.of(context).showSnackBar(
@@ -102,7 +161,8 @@ class _DashboardState extends State<Dashboard> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => UpdateDeleteChildPage(),
+                                  builder: (context) =>
+                                      const UpdateDeleteChildPage(),
                                 ),
                               );
                             },
@@ -116,13 +176,9 @@ class _DashboardState extends State<Dashboard> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => ViewChildrenPage(),
+                                  builder: (context) =>
+                                      const ViewChildrenPage(),
                                 ),
-                              );
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content:
-                                        Text("View Child Profile Selected")),
                               );
                             },
                           ),
@@ -146,8 +202,6 @@ class _DashboardState extends State<Dashboard> {
               ),
             ),
             const SizedBox(height: 20),
-
-            // "Growth Monitor" button
             ElevatedButton.icon(
               onPressed: () {
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -156,6 +210,29 @@ class _DashboardState extends State<Dashboard> {
               },
               icon: const Icon(Icons.monitor_weight),
               label: const Text("Growth Monitor"),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+                foregroundColor: Colors.white, // Text color
+                padding: const EdgeInsets.symmetric(vertical: 15),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                textStyle: const TextStyle(fontSize: 18),
+                minimumSize: const Size(double.infinity, 50),
+              ),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const NutritionAssistPage(),
+                  ),
+                );
+              },
+              icon: const Icon(Icons.monitor_weight),
+              label: const Text("Nutrition Assist"),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green,
                 foregroundColor: Colors.white, // Text color

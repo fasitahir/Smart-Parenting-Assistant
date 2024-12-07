@@ -6,6 +6,9 @@ from dotenv import load_dotenv
 # Import routers from child management and other modules
 from lib.DL.childManagement import router as child_management_router
 from lib.DL.registration import router as registration_router
+from lib.DL.reminder_data import router as reminder_data_router
+from lib.DL.nutition import router as nutrition_data_router
+
 
 # Load environment variables (like database URI or port)
 load_dotenv()
@@ -25,6 +28,9 @@ app.add_middleware(
 # Register the child management and registration routers
 app.include_router(child_management_router, prefix="/children", tags=["Children"])
 app.include_router(registration_router, prefix="", tags=["Auth"])
+app.include_router(reminder_data_router, prefix="/reminders", tags=["Reminders"])
+app.include_router(nutrition_data_router, prefix="", tags=["Nutrition"])
+
 
 # Add a simple health check route
 @app.get("/health")

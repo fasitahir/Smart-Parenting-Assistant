@@ -246,8 +246,8 @@ class _UpdateDeleteChildPageState extends State<UpdateDeleteChildPage> {
                 deleteChild(childId);
                 Navigator.pop(context);
               },
-              child: const Text('Delete'),
               style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+              child: const Text('Delete'),
             ),
           ],
         );
