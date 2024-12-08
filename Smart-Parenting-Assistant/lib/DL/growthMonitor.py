@@ -71,6 +71,3 @@ async def add_growth(data: GrowthData):
 
     return {"message": "Growth data added and child profile updated"}
 
-@router.get("/children", response_model=List[ChildProfile])
-async def get_children():
-    return list(children_collection.find({}, {"_id": 0}))

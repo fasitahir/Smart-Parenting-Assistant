@@ -54,6 +54,12 @@ async def get_children_by_parent(parentId: str):
         raise HTTPException(status_code=404, detail="No children found for this parent")
     return children_list
 
+@router.get("/{child_id}", response_model=dict)
+async def get_child_by_id(child_id: str):
+    child = children_collection.find_one({"_id": ObjectId(child_id)})
+    if not child:
+        raise HTTPException(status_code=404, detail="Child not found")
+    return child_serializer(child)
 
 @router.put("/{child_id}", response_model=dict)
 async def update_child(child_id: str, updated_child: ChildModel):

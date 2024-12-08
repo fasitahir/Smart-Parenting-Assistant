@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class GrowthMonitorPage extends StatefulWidget {
   const GrowthMonitorPage({super.key});
@@ -20,7 +21,6 @@ class _GrowthMonitorPageState extends State<GrowthMonitorPage> {
 
   // API Endpoints
   final String _growthApiEndpoint = 'http://127.0.0.1:8000/growth';
-  final String _childrenApiEndpoint = 'http://127.0.0.1:8000/children';
 
   @override
   void initState() {
@@ -30,7 +30,13 @@ class _GrowthMonitorPageState extends State<GrowthMonitorPage> {
 
   Future<void> _fetchChildren() async {
     try {
-      final response = await http.get(Uri.parse(_childrenApiEndpoint));
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? parentId = prefs.getString('userId');
+
+      final response = await http.get(
+        Uri.parse('http://127.0.0.1:8000/children/?parentId=$parentId'),
+        headers: {"Content-Type": "application/json"},
+      );
       if (response.statusCode == 200) {
         setState(() {
           _children =
@@ -38,6 +44,29 @@ class _GrowthMonitorPageState extends State<GrowthMonitorPage> {
         });
       } else {
         throw Exception('Failed to fetch children');
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error: $e")),
+      );
+    }
+  }
+
+  Future<void> _fetchChildDetails(String childId) async {
+    final String url = 'http://127.0.0.1:8000/children/$childId';
+
+    try {
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> childData = jsonDecode(response.body);
+
+        // Pre-fill fields with the child's data
+        setState(() {
+          _weightController.text = childData['weight'].toString();
+          _heightController.text = childData['height'].toString();
+        });
+      } else {
+        throw Exception('Failed to fetch child details');
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -141,8 +170,11 @@ class _GrowthMonitorPageState extends State<GrowthMonitorPage> {
               onChanged: (value) {
                 setState(() {
                   _selectedChild = value;
-                  _fetchGrowthData();
                 });
+
+                // Fetch child details
+                _fetchChildDetails(
+                    value!['id']); // Use the child's ID to fetch details
               },
               hint: const Text("Select a child"),
             ),
@@ -160,7 +192,7 @@ class _GrowthMonitorPageState extends State<GrowthMonitorPage> {
             TextField(
               controller: _heightController,
               keyboardType: TextInputType.number,
-              decoration: const InputDecoration(labelText: "Height (cm)"),
+              decoration: const InputDecoration(labelText: "Height (ft)"),
             ),
             TextField(
               controller: _milestoneController,
@@ -211,7 +243,7 @@ class _GrowthMonitorPageState extends State<GrowthMonitorPage> {
                           title: Text(
                               "Date: ${data['date'].toString().split('T')[0]}"),
                           subtitle: Text(
-                              "Weight: ${data['weight']} kg, Height: ${data['height']} cm"),
+                              "Weight: ${data['weight']} kg, Height: ${data['height']} ft"),
                           trailing: Text(data['milestone'] ?? "No Milestone"),
                         );
                       },
