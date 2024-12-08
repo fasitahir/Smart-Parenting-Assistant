@@ -8,6 +8,7 @@ from lib.DL.childManagement import router as child_management_router
 from lib.DL.registration import router as registration_router
 from lib.DL.reminder_data import router as reminder_data_router
 from lib.DL.nutition import router as nutrition_data_router
+from lib.DL.growthMonitor import router as growth_monitor_router
 
 
 # Load environment variables (like database URI or port)
@@ -30,7 +31,7 @@ app.include_router(child_management_router, prefix="/children", tags=["Children"
 app.include_router(registration_router, prefix="", tags=["Auth"])
 app.include_router(reminder_data_router, prefix="/reminders", tags=["Reminders"])
 app.include_router(nutrition_data_router, prefix="", tags=["Nutrition"])
-
+app.include_router(growth_monitor_router, prefix="", tags=["Growth Monitor"])
 
 # Add a simple health check route
 @app.get("/health")

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -71,11 +72,11 @@ class _AddChildPageState extends State<AddChildPage> {
     required String userId,
   }) async {
     final response = await http.post(
-      Uri.parse('http://127.0.0.1:8000/children/'),
+      Uri.parse('http://127.0.0.1:8000/children'),
       headers: {"Content-Type": "application/json"},
       body: jsonEncode({
         "name": name,
-        "date_of_birth": dateOfBirth.toIso8601String().split('T')[0],
+        "date_of_birth": dateOfBirth.toIso8601String(),
         "gender": gender,
         "allergies": allergies,
         "weight": weight,
@@ -85,9 +86,13 @@ class _AddChildPageState extends State<AddChildPage> {
     );
 
     if (response.statusCode == 201) {
-      print("Child added successfully: ${response.body}");
+      if (kDebugMode) {
+        print("Child added successfully");
+      }
     } else {
-      print("Failed to add child: ${response.body}");
+      if (kDebugMode) {
+        print("Failed to add child");
+      }
     }
   }
 

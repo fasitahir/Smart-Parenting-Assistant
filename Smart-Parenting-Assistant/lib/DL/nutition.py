@@ -6,11 +6,13 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from typing import List, Optional
 import time
+import pandas as pd
 
 router = APIRouter()
 # Configure API Key
-genai.configure(api_key="AIzaSyDv63B20hCJJkplVhmsRu6KtFu3d6xk2X0")  # Replace with your API key
-
+with open("D:\\FasiTahir\\apiKey.txt", "r") as file:
+    key = file.read().strip()
+genai.configure(api_key=key)
 # Create the model
 generation_config = {
     "temperature": 0.7,

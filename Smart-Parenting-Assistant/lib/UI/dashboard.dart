@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'Child_Management/add_profile.dart';
 import 'Child_Management/view_profile.dart';
 import 'Child_Management/update_profile.dart';
+import 'Child_Management/growth_monitor.dart';
 import 'Reminder/view_reminders.dart';
 import 'Reminder/add_reminder.dart';
 import 'Reminder/update_reminder.dart';
@@ -204,8 +205,11 @@ class _DashboardState extends State<Dashboard> {
             const SizedBox(height: 20),
             ElevatedButton.icon(
               onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Growth Monitor Selected")),
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const GrowthMonitorPage(),
+                  ),
                 );
               },
               icon: const Icon(Icons.monitor_weight),
@@ -231,7 +235,7 @@ class _DashboardState extends State<Dashboard> {
                   ),
                 );
               },
-              icon: const Icon(Icons.monitor_weight),
+              icon: const Icon(Icons.restaurant_menu),
               label: const Text("Nutrition Assist"),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green,
