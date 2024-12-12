@@ -5,7 +5,7 @@ from typing import List
 from datetime import datetime
 from pymongo import MongoClient
 from bson import ObjectId
-
+from fastapi import APIRouter, HTTPException
 
 # MongoDB Setup
 client = MongoClient("mongodb://localhost:27017/")
@@ -83,3 +83,26 @@ async def detect_growth(child_id: str):
     # Check if the child's growth is within normal range
     # (For simplicity, we are not implementing the actual growth detection logic here)
     return {"message": "Growth data detected", "data": latest_data}
+
+
+
+@router.get("/growth/getGrowthData/{child_id}")
+async def get_growth_data(child_id: str):
+    try:
+        growth_data = list(growth_collection.find({"child_id": child_id}).sort("date", 1))
+        if not growth_data:
+            raise HTTPException(status_code=404, detail="No growth data found for this child")
+        response_data = {"message": "Growth data found", "data": growth_data}
+        
+        for data in growth_data:
+            data["_id"] = str(data["_id"])
+
+        for data in growth_data:
+            if "date" in data:  # Replace "date" with the actual field name
+                data["date"] = data["date"].isoformat()
+        
+    
+        return JSONResponse(response_data, status_code=200)
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -79,10 +80,16 @@ class _GrowthMonitorPageState extends State<GrowthMonitorPage> {
 
     try {
       final response = await http.get(
-          Uri.parse("http://127.0.0.1:8000/growth/getGrowthData/$childId"));
+        Uri.parse("http://127.0.0.1:8000/growth/getGrowthData/$childId"),
+      );
+
       if (response.statusCode == 200) {
+        // Use 200 for successful GET
+        final decodedResponse = jsonDecode(response.body);
+
         final allGrowthData =
-            List<Map<String, dynamic>>.from(jsonDecode(response.body));
+            List<Map<String, dynamic>>.from(decodedResponse['data']);
+
         setState(() {
           _growthData = allGrowthData
               .where((data) => data['child_id'] == _selectedChild!['id'])
@@ -92,6 +99,9 @@ class _GrowthMonitorPageState extends State<GrowthMonitorPage> {
         throw Exception('Failed to fetch growth data');
       }
     } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Error: $e")),
       );
@@ -175,6 +185,7 @@ class _GrowthMonitorPageState extends State<GrowthMonitorPage> {
                 // Fetch child details
                 _fetchChildDetails(
                     value!['id']); // Use the child's ID to fetch details
+                _fetchGrowthData(value['id']);
               },
               hint: const Text("Select a child"),
             ),
