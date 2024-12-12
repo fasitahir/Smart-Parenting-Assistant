@@ -85,7 +85,21 @@ class _AddChildPageState extends State<AddChildPage> {
       }),
     );
 
-    if (response.statusCode == 201) {
+    final response2 = await http.post(
+      Uri.parse('http://127.0.0.1:8000/growth/initial'),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({
+        "childId": jsonDecode(response.body)['id'],
+        "date": DateTime.now(),
+        "weight": weight,
+        "height": height,
+        "milestones": [],
+      }),
+    );
+    if (kDebugMode) {
+      print(response2.statusCode);
+    }
+    if (response.statusCode == 201 && response2.statusCode == 201) {
       if (kDebugMode) {
         print("Child added successfully");
       }
@@ -248,7 +262,7 @@ class _AddChildPageState extends State<AddChildPage> {
               // Height Field
               TextFormField(
                 decoration: InputDecoration(
-                  labelText: "Height (cm)",
+                  labelText: "Height (ft)",
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),

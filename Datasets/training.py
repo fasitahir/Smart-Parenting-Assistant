@@ -4,11 +4,12 @@ from sklearn.preprocessing import LabelEncoder
 from xgboost import XGBClassifier
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import cross_val_score, train_test_split
 import matplotlib.pyplot as plt
 import numpy as np 
 import pandas as pd 
 import seaborn as sns
+from sklearn.model_selection import StratifiedKFold
 
 
 label_encoder = LabelEncoder()
@@ -65,6 +66,17 @@ plt.show()
 
 
 random_forest = RandomForestClassifier(random_state=42)
+
+cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+
+# Evaluate the model using cross-validation
+rf_cv_scores = cross_val_score(random_forest, X_over, y_over, cv=cv, scoring='accuracy')
+
+# Print the cross-validation results
+print(f"Random Forest Cross-Validation Accuracy Scores: {rf_cv_scores}")
+print(f"Mean Random Forest Cross-Validation Accuracy: {np.mean(rf_cv_scores) * 100:.2f}%")
+print(f"Standard Deviation: {np.std(rf_cv_scores) * 100:.2f}%")
+
 random_forest.fit(X_train_over, y_train_encoded)
 
 # Make predictions

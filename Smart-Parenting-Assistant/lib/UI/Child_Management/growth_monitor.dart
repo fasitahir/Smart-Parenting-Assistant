@@ -20,7 +20,6 @@ class _GrowthMonitorPageState extends State<GrowthMonitorPage> {
   Map<String, dynamic>? _selectedChild;
 
   // API Endpoints
-  final String _growthApiEndpoint = 'http://127.0.0.1:8000/growth';
 
   @override
   void initState() {
@@ -75,11 +74,12 @@ class _GrowthMonitorPageState extends State<GrowthMonitorPage> {
     }
   }
 
-  Future<void> _fetchGrowthData() async {
+  Future<void> _fetchGrowthData(String childId) async {
     if (_selectedChild == null) return;
 
     try {
-      final response = await http.get(Uri.parse(_growthApiEndpoint));
+      final response = await http.get(
+          Uri.parse("http://127.0.0.1:8000/growth/getGrowthData/$childId"));
       if (response.statusCode == 200) {
         final allGrowthData =
             List<Map<String, dynamic>>.from(jsonDecode(response.body));
@@ -119,7 +119,7 @@ class _GrowthMonitorPageState extends State<GrowthMonitorPage> {
 
     try {
       final response = await http.post(
-        Uri.parse(_growthApiEndpoint),
+        Uri.parse("http://127.0.0.1:8000/growth/add"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(data),
       );
@@ -130,7 +130,7 @@ class _GrowthMonitorPageState extends State<GrowthMonitorPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Growth data added successfully!")),
         );
-        _fetchGrowthData();
+        _fetchGrowthData(_selectedChild!['id']);
       } else {
         throw Exception('Failed to add growth data');
       }

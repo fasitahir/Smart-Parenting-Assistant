@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smart_parenting_assistant/UI/Growth_Evaluation/growth_evaluator.dart';
 import 'Child_Management/add_profile.dart';
 import 'Child_Management/view_profile.dart';
 import 'Child_Management/update_profile.dart';
@@ -237,6 +238,28 @@ class _DashboardState extends State<Dashboard> {
               },
               icon: const Icon(Icons.restaurant_menu),
               label: const Text("Nutrition Assist"),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+                foregroundColor: Colors.white, // Text color
+                padding: const EdgeInsets.symmetric(vertical: 15),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                textStyle: const TextStyle(fontSize: 18),
+                minimumSize: const Size(double.infinity, 50),
+              ),
+            ),
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const GrowthDetectionPage(),
+                  ),
+                );
+              },
+              icon: const Icon(Icons.monitor_weight),
+              label: const Text("Growth Monitor"),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green,
                 foregroundColor: Colors.white, // Text color

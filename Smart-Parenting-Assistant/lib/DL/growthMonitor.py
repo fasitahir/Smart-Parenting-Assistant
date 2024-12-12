@@ -1,15 +1,17 @@
 from fastapi import APIRouter, HTTPException
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from typing import List
 from datetime import datetime
 from pymongo import MongoClient
+from bson import ObjectId
+
 
 # MongoDB Setup
 client = MongoClient("mongodb://localhost:27017/")
-db = client.growth_monitor
+db = client.smart_parenting
 growth_collection = db.growth_data
 children_collection = db.children
-
 # FastAPI App
 router = APIRouter()
 
@@ -21,20 +23,13 @@ class GrowthData(BaseModel):
     height: float
     milestone: str = None
 
-class ChildProfile(BaseModel):
-    name: str
-    date_of_birth: datetime
-    gender: str
-    allergies: str
-    weight: float
-    height: float
-    parentId: str
 
-@router.post("/children", status_code=201)
-async def add_child(child: ChildProfile):
+@router.post("/growth/initial")
+async def add_child(child: GrowthData):
+    print("Adding child initial growth data")
     # Insert child profile
     child_data = child.dict()
-    result = children_collection.insert_one(child_data)
+    result = growth_collection.insert_one(child_data)
 
     if not result.acknowledged:
         raise HTTPException(status_code=500, detail="Failed to add child")
@@ -49,25 +44,42 @@ async def add_child(child: ChildProfile):
     }
     growth_collection.insert_one(growth_data)
 
-    return {"message": "Child added successfully"}
+    response_data =  {"message": "Child added successfully"}
+    return JSONResponse(response_data, status_code=201)
 
-@router.post("/growth", status_code=201)
+@router.post("/growth/add")
 async def add_growth(data: GrowthData):
     # Add growth data
     growth_data = data.dict()
     result = growth_collection.insert_one(growth_data)
-
-    if not result.acknowledged:
+    if result is None:
         raise HTTPException(status_code=500, detail="Failed to add growth data")
-
     # Update child's height and weight in their profile
+    print("child_id: ", ObjectId(data.child_id))
     update_result = children_collection.update_one(
-        {"_id": data.child_id},
+        {"_id": ObjectId(data.child_id)},
         {"$set": {"weight": data.weight, "height": data.height}}
     )
 
     if update_result.matched_count == 0:
         raise HTTPException(status_code=404, detail="Child not found")
+    
+    response_data = {"message": "Growth data added successfully"}
+    return JSONResponse(response_data, status_code=201)
 
-    return {"message": "Growth data added and child profile updated"}
 
+
+@router.get("/growth-detection/{child_id}")
+async def detect_growth(child_id: str):
+    # Get the latest growth data for the child
+    latest_data = growth_collection.find_one(
+        {"child_id": child_id},
+        sort=[("date", -1)]
+    )
+
+    if latest_data is None:
+        raise HTTPException(status_code=404, detail="Child not found or no data available")
+
+    # Check if the child's growth is within normal range
+    # (For simplicity, we are not implementing the actual growth detection logic here)
+    return {"message": "Growth data detected", "data": latest_data}
