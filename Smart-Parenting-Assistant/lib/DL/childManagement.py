@@ -40,6 +40,7 @@ def child_serializer(child) -> dict:
 # Routes
 @router.post("/", response_model=dict)
 async def add_child(child: ChildModel):
+    print(f"Adding child: {child.dict()}")
     result = children_collection.insert_one(child.dict())
     print(f"Insert result: {result.inserted_id}")
 

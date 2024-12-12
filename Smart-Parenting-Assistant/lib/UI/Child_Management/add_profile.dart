@@ -72,7 +72,7 @@ class _AddChildPageState extends State<AddChildPage> {
     required String userId,
   }) async {
     final response = await http.post(
-      Uri.parse('http://127.0.0.1:8000/children'),
+      Uri.parse('http://127.0.0.1:8000/children/'),
       headers: {"Content-Type": "application/json"},
       body: jsonEncode({
         "name": name,
