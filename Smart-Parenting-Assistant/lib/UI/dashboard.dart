@@ -237,7 +237,7 @@ class _DashboardState extends State<Dashboard> {
                 );
               },
               icon: const Icon(Icons.restaurant_menu),
-              label: const Text("Nutrition Assist"),
+              label: const Text("Diet Recomndations"),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green,
                 foregroundColor: Colors.white, // Text color
@@ -249,6 +249,7 @@ class _DashboardState extends State<Dashboard> {
                 minimumSize: const Size(double.infinity, 50),
               ),
             ),
+            const SizedBox(height: 20),
             ElevatedButton.icon(
               onPressed: () {
                 Navigator.push(
@@ -259,7 +260,7 @@ class _DashboardState extends State<Dashboard> {
                 );
               },
               icon: const Icon(Icons.monitor_weight),
-              label: const Text("Growth Monitor"),
+              label: const Text("Growth Evaluation"),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green,
                 foregroundColor: Colors.white, // Text color

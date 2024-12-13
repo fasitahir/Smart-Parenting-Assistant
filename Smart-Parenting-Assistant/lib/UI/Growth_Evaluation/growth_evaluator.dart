@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -63,13 +64,24 @@ class _GrowthDetectionPageState extends State<GrowthDetectionPage> {
 
     try {
       final response = await http.get(
-        Uri.parse('http://127.0.0.1:8000/growth-detection/?childId=$childId'),
+        Uri.parse('http://127.0.0.1:8000/growth-detection/?child_id=$childId'),
         headers: {"Content-Type": "application/json"},
       );
 
       if (response.statusCode == 200) {
         setState(() {
-          growthStatus = jsonDecode(response.body)['growth_status'];
+          final jsonData = jsonDecode(response.body)['data'];
+          final nutritionStatus = jsonData['nutrition_status'];
+          final message = formatMessage(
+            name: jsonData['name'],
+            age: jsonData['age'],
+            height: jsonData['height'],
+            gender: jsonData['gender'],
+            nutritionStatus: nutritionStatus,
+          );
+
+          // Display the message in the UI or store it in a variable
+          growthStatus = message;
         });
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -78,6 +90,9 @@ class _GrowthDetectionPageState extends State<GrowthDetectionPage> {
         );
       }
     } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: $e')),
       );
@@ -86,6 +101,57 @@ class _GrowthDetectionPageState extends State<GrowthDetectionPage> {
         isLoading = false;
       });
     }
+  }
+
+  Widget buildNutritionStatus(String nutritionStatus) {
+    Color textColor = (nutritionStatus == "Normal" || nutritionStatus == "Tall")
+        ? Colors.green
+        : Colors.red;
+
+    return Text(
+      "Nutrition Status: $nutritionStatus",
+      style: TextStyle(fontSize: 16, color: textColor),
+    );
+  }
+
+  Widget buildNutritionLink() {
+    return GestureDetector(
+      onTap: () {
+        // Navigate to the Nutrition Assist page
+        Navigator.pushNamed(context, '/nutrition-assist');
+      },
+      child: const Text(
+        "Visit the Nutrition Assist window for dietary recommendations.",
+        style: TextStyle(
+          fontSize: 16,
+          color: Colors.blue,
+          decoration: TextDecoration.underline,
+        ),
+      ),
+    );
+  }
+
+  String formatMessage(
+      {required String name,
+      required int age,
+      required double height,
+      required String gender,
+      required String nutritionStatus}) {
+    String baseMessage = "Child: $name\n"
+        "Age: $age months\n"
+        "Height: $height cm\n"
+        "Gender: $gender\n";
+
+    if (nutritionStatus == "Normal" || nutritionStatus == "Tall") {
+      baseMessage +=
+          "The child's growth is within a healthy range. Keep up the good parenting.";
+    } else if (nutritionStatus == "Severely stunned" ||
+        nutritionStatus == "Stunned") {
+      baseMessage +=
+          "The child's growth is abnormal. Please visit a pediatrician for further evaluation.";
+    }
+
+    return baseMessage;
   }
 
   @override
@@ -133,14 +199,14 @@ class _GrowthDetectionPageState extends State<GrowthDetectionPage> {
                 ? const Center(child: CircularProgressIndicator())
                 : growthStatus.isEmpty
                     ? const Text('Select a child to view growth status.')
-                    : Text(
-                        growthStatus,
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: growthStatus.contains('Normal')
-                              ? Colors.green
-                              : Colors.red,
-                        ),
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          buildNutritionStatus(growthStatus),
+                          const SizedBox(height: 10),
+                          if (growthStatus.contains('abnormal'))
+                            buildNutritionLink(),
+                        ],
                       ),
             const SizedBox(height: 20),
             ElevatedButton(
