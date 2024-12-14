@@ -10,7 +10,7 @@ import os
 client = MongoClient("mongodb://localhost:27017/")
 db = client.smart_parenting
 children_collection = db.children
-
+growth_collection = db.growth_data
 # Create an APIRouter instance for child management
 router = APIRouter()
 
@@ -40,6 +40,7 @@ def child_serializer(child) -> dict:
 # Routes
 @router.post("/", response_model=dict)
 async def add_child(child: ChildModel):
+    print(f"Adding child: {child.dict()}")
     result = children_collection.insert_one(child.dict())
     print(f"Insert result: {result.inserted_id}")
 
@@ -54,12 +55,23 @@ async def get_children_by_parent(parentId: str):
         raise HTTPException(status_code=404, detail="No children found for this parent")
     return children_list
 
+@router.get("/{child_id}", response_model=dict)
+async def get_child_by_id(child_id: str):
+    child = children_collection.find_one({"_id": ObjectId(child_id)})
+    if not child:
+        raise HTTPException(status_code=404, detail="Child not found")
+    return child_serializer(child)
 
 @router.put("/{child_id}", response_model=dict)
 async def update_child(child_id: str, updated_child: ChildModel):
     result = children_collection.update_one(
         {"_id": ObjectId(child_id)}, {"$set": updated_child.dict()}
     )
+    growth_collection.find_one_and_update(
+        {"child_id": child_id}, {"$set": {"weight": updated_child.weight, "height": updated_child.height}},
+        sort = [("date", -1)]
+    )
+
     if result.matched_count == 0:
         raise HTTPException(status_code=404, detail="Child not found")
     return {"message": "Child updated successfully"}
@@ -68,6 +80,7 @@ async def update_child(child_id: str, updated_child: ChildModel):
 async def delete_child(child_id: str):
     print(f"Deleting child with ID: {child_id}")
     result = children_collection.delete_one({"_id": ObjectId(child_id)})
+    growth_collection.delete_many({"child_id": child_id})
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Child not found")
     return {"message": "Child deleted successfully"}

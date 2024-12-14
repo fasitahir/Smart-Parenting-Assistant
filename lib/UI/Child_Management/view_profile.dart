@@ -39,47 +39,56 @@ class _ViewChildrenPageState extends State<ViewChildrenPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Children List'),
-        backgroundColor: Colors.blue,
-      ),
-      body: FutureBuilder<List<dynamic>>(
-        future: _childrenFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('No children found.'));
-          } else {
-            final children = snapshot.data!;
-            return ListView.builder(
-              itemCount: children.length,
-              itemBuilder: (context, index) {
-                final child = children[index];
-                return Card(
-                  margin: const EdgeInsets.all(8),
-                  child: ListTile(
-                    title: Text(
-                      child['name'],
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    subtitle: Text(
-                      'DOB: ${child['date_of_birth']}\n'
-                      'Gender: ${child['gender']}\n'
-                      'Weight: ${child['weight']} kg\n'
-                      'Height: ${child['height']} ft\n'
-                      'Allergies: ${child['allergies']}',
-                    ),
-                    trailing: const Icon(Icons.child_care, color: Colors.blue),
-                  ),
+        appBar: AppBar(
+          title: const Text(
+            'Children List',
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Plus Jakarta Sans',
+                color: Colors.white),
+          ),
+          backgroundColor: Colors.blueAccent,
+        ),
+        body: Container(
+          color: Colors.white,
+          child: FutureBuilder<List<dynamic>>(
+            future: _childrenFuture,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                return const Center(child: Text('No children found.'));
+              } else {
+                final children = snapshot.data!;
+                return ListView.builder(
+                  itemCount: children.length,
+                  itemBuilder: (context, index) {
+                    final child = children[index];
+                    return Card(
+                      margin: const EdgeInsets.all(8),
+                      child: ListTile(
+                        title: Text(
+                          child['name'],
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        subtitle: Text(
+                          'DOB: ${child['date_of_birth']}\n'
+                          'Gender: ${child['gender']}\n'
+                          'Weight: ${child['weight']} kg\n'
+                          'Height: ${child['height']} ft\n'
+                          'Allergies: ${child['allergies']}',
+                        ),
+                        trailing:
+                            const Icon(Icons.child_care, color: Colors.blue),
+                      ),
+                    );
+                  },
                 );
-              },
-            );
-          }
-        },
-      ),
-    );
+              }
+            },
+          ),
+        ));
   }
 }
