@@ -81,3 +81,4 @@ Ensure your 📱 device or emulator is connected and properly set up.
 
 - Start the backend server (⚡ FastAPI) and keep it running.
 - Launch the 🐦 Flutter frontend application to interact with the Smart Parenting Assistant. 👶
+
