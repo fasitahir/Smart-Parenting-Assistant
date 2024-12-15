@@ -32,27 +32,32 @@ class GrowthData(BaseModel):
 
 @router.post("/growth/initial")
 async def add_child(child: GrowthData):
-    print("Adding child initial growth data")
-    # Insert child profile
-    child_data = child.dict()
-    result = growth_collection.insert_one(child_data)
+    try:
+            
+        print("Adding child initial growth data")
+        # Insert child profile
+        child_data = child.dict()
+        result = growth_collection.insert_one(child_data)
 
-    if not result.acknowledged:
-        raise HTTPException(status_code=500, detail="Failed to add child")
+        if not result.acknowledged:
+            raise HTTPException(status_code=500, detail="Failed to add child")
 
-    # Add initial growth data for the child
-    growth_data = {
-        "child_id": str(result.inserted_id),
-        "date": datetime.utcnow(),
-        "weight": child.weight,
-        "height": child.height,
-        "milestone": "Initial Data"
-    }
-    growth_collection.insert_one(growth_data)
+        # Add initial growth data for the child
+        growth_data = {
+            "child_id": str(result.inserted_id),
+            "date": datetime.utcnow(),
+            "weight": child.weight,
+            "height": child.height,
+            "milestone": "Initial Data"
+        }
+        growth_collection.insert_one(growth_data)
 
-    response_data =  {"message": "Child added successfully"}
-    return JSONResponse(response_data, status_code=201)
-
+        response_data =  {"message": "Child added successfully"}
+        return JSONResponse(response_data, status_code=201)
+    except Exception as e:
+        print(f"Error adding child: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
+    
 @router.post("/growth/add")
 async def add_growth(data: GrowthData):
     # Add growth data
@@ -174,23 +179,23 @@ async def detect_growth(child_id: str):
 
 
 
-# @router.get("/growth/getGrowthData/{child_id}")
-# async def get_growth_data(child_id: str):
-#     try:
-#         growth_data = list(growth_collection.find({"child_id": child_id}).sort("date", 1))
-#         if not growth_data:
-#             raise HTTPException(status_code=404, detail="No growth data found for this child")
-#         response_data = {"message": "Growth data found", "data": growth_data}
+@router.get("/growth/getGrowthData/{child_id}")
+async def get_growth_data(child_id: str):
+    try:
+        growth_data = list(growth_collection.find({"child_id": child_id}).sort("date", 1))
+        if not growth_data:
+            raise HTTPException(status_code=404, detail="No growth data found for this child")
+        response_data = {"message": "Growth data found", "data": growth_data}
         
-#         for data in growth_data:
-#             data["_id"] = str(data["_id"])
+        for data in growth_data:
+            data["_id"] = str(data["_id"])
 
-#         for data in growth_data:
-#             if "date" in data:  # Replace "date" with the actual field name
-#                 data["date"] = data["date"].isoformat()
+        for data in growth_data:
+            if "date" in data:  # Replace "date" with the actual field name
+                data["date"] = data["date"].isoformat()
         
     
-#         return JSONResponse(response_data, status_code=200)
+        return JSONResponse(response_data, status_code=200)
         
-#     except Exception as e:
-#         raise HTTPException(status_code=500, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

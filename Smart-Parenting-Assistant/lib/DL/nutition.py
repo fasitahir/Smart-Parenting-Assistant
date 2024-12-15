@@ -7,7 +7,7 @@ import re
 router = APIRouter()
 
 # Configure API Key
-with open("G:\\5th Semester\\AI Theory Project\\apiKey.txt", "r") as file:
+with open("D:\\FasiTahir\\apiKey.txt", "r") as file:
     key = file.read().strip()
 genai.configure(api_key=key)
 

@@ -137,7 +137,8 @@ class _GrowthDetectionPageState extends State<GrowthDetectionPage> {
       required double height,
       required String gender,
       required String nutritionStatus}) {
-    String baseMessage = "Child: $name\n"
+    String baseMessage = "$nutritionStatus\n"
+        "Child: $name\n"
         "Age: $age months\n"
         "Height: $height cm\n"
         "Gender: $gender\n";
@@ -157,70 +158,80 @@ class _GrowthDetectionPageState extends State<GrowthDetectionPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Growth Detection'),
-        backgroundColor: Colors.blue,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Select Child',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            DropdownButton<String>(
-              value: selectedChildId,
-              hint: const Text('Select a child'),
-              items: children.map((child) {
-                return DropdownMenuItem<String>(
-                  value: child['id'],
-                  child: Text(child['name']),
-                );
-              }).toList(),
-              onChanged: (value) {
-                setState(() {
-                  selectedChildId = value;
-                  growthStatus = "";
-                });
-                if (value != null) {
-                  fetchGrowthDetection(value);
-                }
-              },
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              'Growth Status',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
-            isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : growthStatus.isEmpty
-                    ? const Text('Select a child to view growth status.')
-                    : Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          buildNutritionStatus(growthStatus),
-                          const SizedBox(height: 10),
-                          if (growthStatus.contains('abnormal'))
-                            buildNutritionLink(),
-                        ],
-                      ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: selectedChildId == null
-                  ? null
-                  : () {
-                      Navigator.pushNamed(context, '/growth-monitor',
-                          arguments: selectedChildId);
-                    },
-              child: const Text('Update Growth Data'),
-            ),
-          ],
+        appBar: AppBar(
+          title: const Text(
+            'Growth Detection',
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Plus Jakarta Sans',
+                color: Colors.white),
+          ),
+          backgroundColor: Colors.blue,
         ),
-      ),
-    );
+        body: Container(
+          width: MediaQuery.of(context).size.width, // Full width
+          height: MediaQuery.of(context).size.height, // Full height
+          color: Colors.white,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Select Child',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                DropdownButton<String>(
+                  value: selectedChildId,
+                  hint: const Text('Select a child'),
+                  items: children.map((child) {
+                    return DropdownMenuItem<String>(
+                      value: child['id'],
+                      child: Text(child['name']),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      selectedChildId = value;
+                      growthStatus = "";
+                    });
+                    if (value != null) {
+                      fetchGrowthDetection(value);
+                    }
+                  },
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  'Growth Status',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 10),
+                isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : growthStatus.isEmpty
+                        ? const Text('Select a child to view growth status.')
+                        : Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              buildNutritionStatus(growthStatus),
+                              const SizedBox(height: 10),
+                              if (growthStatus.contains('abnormal'))
+                                buildNutritionLink(),
+                            ],
+                          ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: selectedChildId == null
+                      ? null
+                      : () {
+                          Navigator.pushNamed(context, '/growth-monitor',
+                              arguments: selectedChildId);
+                        },
+                  child: const Text('Update Growth Data'),
+                ),
+              ],
+            ),
+          ),
+        ));
   }
 }

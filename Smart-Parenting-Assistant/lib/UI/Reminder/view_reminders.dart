@@ -51,25 +51,33 @@ class _ViewRemindersPageState extends State<ViewRemindersPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Reminders'),
-      ),
-      body: reminders.isEmpty
-          ? const Center(child: Text('No reminders found'))
-          : ListView.builder(
-              itemCount: reminders.length,
-              itemBuilder: (context, index) {
-                final reminder = reminders[index];
-                return ListTile(
-                  title: Text(reminder["title"]),
-                  subtitle: Text('${reminder["date"]} at ${reminder["time"]}'),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.delete, color: Colors.red),
-                    onPressed: () => deleteReminder(reminder["title"]),
-                  ),
-                );
-              },
-            ),
-    );
+        appBar: AppBar(
+          title: const Text('Reminders',
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Plus Jakarta Sans',
+                  color: Colors.white)),
+          backgroundColor: Colors.blueAccent,
+        ),
+        body: Container(
+          color: Colors.white,
+          child: reminders.isEmpty
+              ? const Center(child: Text('No reminders found'))
+              : ListView.builder(
+                  itemCount: reminders.length,
+                  itemBuilder: (context, index) {
+                    final reminder = reminders[index];
+                    return ListTile(
+                      title: Text(reminder["title"]),
+                      subtitle:
+                          Text('${reminder["date"]} at ${reminder["time"]}'),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.delete, color: Colors.red),
+                        onPressed: () => deleteReminder(reminder["title"]),
+                      ),
+                    );
+                  },
+                ),
+        ));
   }
 }

@@ -601,108 +601,118 @@ class _NutritionAssistPageState extends State<NutritionAssistPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Nutrition Assist'),
-        backgroundColor: Colors.blueAccent,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Select Child',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            DropdownButton<String>(
-              value: selectedChildId,
-              hint: const Text('Select a child'),
-              items: children.map((child) {
-                return DropdownMenuItem<String>(
-                  value: child['id'],
-                  child: Text(child['name']),
-                );
-              }).toList(),
-              isExpanded: true,
-              onChanged: (value) {
-                setState(() {
-                  selectedChildId = value;
-                  fetchNutritionSuggestions(value!);
-                });
-              },
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              'Nutrition Suggestions',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
-            Expanded(
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.grey[100],
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: isLoading
-                    ? const Center(child: CircularProgressIndicator())
-                    : nutritionSuggestions.isEmpty
-                        ? const Center(child: Text('No suggestions available.'))
-                        : ListView.builder(
-                            itemCount: nutritionSuggestions.length,
-                            itemBuilder: (context, index) {
-                              final section = nutritionSuggestions[index];
-                              return Card(
-                                elevation: 4,
-                                margin: const EdgeInsets.symmetric(vertical: 8),
-                                child: ListTile(
-                                  title: Text(
-                                    section['title'] ?? '',
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  subtitle: _buildFormattedContent(
-                                      section['content']!),
-                                ),
-                              );
-                            },
-                          ),
-              ),
-            ),
-            const Divider(),
-            const Text(
-              'Ask Follow-up Question',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            Row(
+        appBar: AppBar(
+          title: const Text(
+            'Nutrition Assist',
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Plus Jakarta Sans',
+                color: Colors.white),
+          ),
+          backgroundColor: Colors.blueAccent,
+        ),
+        body: Container(
+          color: Colors.white,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                const Text(
+                  'Select Child',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                DropdownButton<String>(
+                  value: selectedChildId,
+                  hint: const Text('Select a child'),
+                  items: children.map((child) {
+                    return DropdownMenuItem<String>(
+                      value: child['id'],
+                      child: Text(child['name']),
+                    );
+                  }).toList(),
+                  isExpanded: true,
+                  onChanged: (value) {
+                    setState(() {
+                      selectedChildId = value;
+                      fetchNutritionSuggestions(value!);
+                    });
+                  },
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  'Nutrition Suggestions',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 10),
                 Expanded(
-                  child: TextField(
-                    controller: followUpController,
-                    decoration: InputDecoration(
-                      labelText: 'Type your question...',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
+                  child: Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[100],
+                      borderRadius: BorderRadius.circular(12),
                     ),
+                    child: isLoading
+                        ? const Center(child: CircularProgressIndicator())
+                        : nutritionSuggestions.isEmpty
+                            ? const Center(
+                                child: Text('No suggestions available.'))
+                            : ListView.builder(
+                                itemCount: nutritionSuggestions.length,
+                                itemBuilder: (context, index) {
+                                  final section = nutritionSuggestions[index];
+                                  return Card(
+                                    elevation: 4,
+                                    margin:
+                                        const EdgeInsets.symmetric(vertical: 8),
+                                    child: ListTile(
+                                      title: Text(
+                                        section['title'] ?? '',
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      subtitle: _buildFormattedContent(
+                                          section['content']!),
+                                    ),
+                                  );
+                                },
+                              ),
                   ),
                 ),
-                const SizedBox(width: 8),
-                ElevatedButton(
-                  onPressed: () {
-                    sendFollowUp(followUpController.text);
-                  },
-                  child: const Text('Send'),
+                const Divider(),
+                const Text(
+                  'Ask Follow-up Question',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: followUpController,
+                        decoration: InputDecoration(
+                          labelText: 'Type your question...',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    ElevatedButton(
+                      onPressed: () {
+                        sendFollowUp(followUpController.text);
+                      },
+                      child: const Text('Send'),
+                    ),
+                  ],
                 ),
               ],
             ),
-          ],
-        ),
-      ),
-    );
+          ),
+        ));
   }
 }
 

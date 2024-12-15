@@ -75,110 +75,62 @@ X_test_encoded[['Gender']] = encoder.transform(X_test[['Gender']])
 # Encode target labels
 label_encoder = LabelEncoder()
 y_train_encoded = label_encoder.fit_transform(y_train)
+y_test_encoded = label_encoder.transform(y_test)
 
+# Train and Evaluate Models
+def evaluate_model(model, X_test, y_test, model_name):
+    y_pred_encoded = model.predict(X_test)
+    y_pred = label_encoder.inverse_transform(y_pred_encoded)
+    
+    # Accuracy
+    accuracy = accuracy_score(y_test, y_pred)
+    print(f'{model_name} Test Accuracy: {accuracy * 100:.2f}%')
+
+    # Classification report
+    report = classification_report(y_test, y_pred, output_dict=True)
+    precision = report['weighted avg']['precision']
+    recall = report['weighted avg']['recall']
+    f1_score = report['weighted avg']['f1-score']
+    print(f"{model_name} Precision: {precision:.2f}, Recall: {recall:.2f}, F1-Score: {f1_score:.2f}, Accuracy: {accuracy:.2f}")
+
+    # Confusion matrix
+        # Confusion matrix
+    cm = confusion_matrix(y_test, y_pred)
+    cm_labels = label_encoder.classes_
+
+    plt.figure(figsize=(10, 8))
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=cm_labels, yticklabels=cm_labels, annot_kws={"size": 14})
+    plt.title(f'Confusion Matrix {model_name}', fontsize=16)
+    plt.xlabel('Predicted Labels', fontsize=15)
+    plt.ylabel('True Labels', fontsize=15)
+    plt.xticks(fontsize=14)
+    plt.yticks(fontsize=14)
+    plt.show()
 # Train XGBoost model
 xgb_model = XGBClassifier(random_state=42)
 xgb_model.fit(X_train_encoded, y_train_encoded)
+evaluate_model(xgb_model, X_test_encoded, y_test, "XGBoost")
 
-# Make predictions
-y_pred_encoded = xgb_model.predict(X_test_encoded)
-y_pred = label_encoder.inverse_transform(y_pred_encoded)
-
-# Accuracy
-accuracy = accuracy_score(y_test, y_pred)
-print(f'Test Accuracy: {accuracy * 100:.2f}%')
-
-# Classification report
-print("\nClassification Report:")
-print(classification_report(y_test, y_pred))
-
-# Confusion matrix
-cm = confusion_matrix(y_test, y_pred)
-cm_labels = label_encoder.classes_
-
-plt.figure(figsize=(8, 6))
-sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=cm_labels, yticklabels=cm_labels)
-plt.title('Confusion Matrix XGBoost')
-plt.xlabel('Predicted Labels')
-plt.ylabel('True Labels')
-plt.show()
-
-
-
+# Train Random Forest model
 random_forest = RandomForestClassifier(random_state=42)
 random_forest.fit(X_train_encoded, y_train_encoded)
+evaluate_model(random_forest, X_test_encoded, y_test, "Random Forest")
 
-
-# Make predictions
-y_pred_encoded = random_forest.predict(X_test_encoded)
-y_pred = label_encoder.inverse_transform(y_pred_encoded)
-
-# Accuracy
-accuracy = accuracy_score(y_test, y_pred)
-print(f'Test Accuracy: {accuracy * 100:.2f}%')
-
-# Classification report
-print("\nClassification Report:")
-print(classification_report(y_test, y_pred))
-
-# Confusion matrix
-cm = confusion_matrix(y_test, y_pred)
-cm_labels = label_encoder.classes_
-
-plt.figure(figsize=(8, 6))
-sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=cm_labels, yticklabels=cm_labels)
-plt.title('Confusion Matrix Random Forest')
-plt.xlabel('Predicted Labels')
-plt.ylabel('True Labels')
-plt.show()
-
-
-
+# Train KNN model
 knn = KNeighborsClassifier()
 knn.fit(X_train_encoded, y_train_encoded)
+evaluate_model(knn, X_test_encoded, y_test, "KNN")
 
-# Make predictions
-y_pred_encoded = knn.predict(X_test_encoded)
-y_pred = label_encoder.inverse_transform(y_pred_encoded)
-
-# Accuracy
-accuracy = accuracy_score(y_test, y_pred)
-print(f'Test Accuracy: {accuracy * 100:.2f}%')
-
-# Classification report
-print("\nClassification Report:")
-print(classification_report(y_test, y_pred))
-
-# Confusion matrix
-cm = confusion_matrix(y_test, y_pred)
-cm_labels = label_encoder.classes_
-
-plt.figure(figsize=(8, 6))
-sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=cm_labels, yticklabels=cm_labels)
-plt.title('Confusion Matrix KNN')
-plt.xlabel('Predicted Labels')
-plt.ylabel('True Labels')
-plt.show()
-
-
-
-#Balancing the dataset
-
+# Balancing the dataset
 # SMOTE for oversampling
 
-# Feature and target separation
 
 
-# X = df.drop('Nutrition Status', axis=1)
-# y = df['Nutrition Status']
+# X_encoded = pd.get_dummies(X)
+# label_encoder = LabelEncoder()
+# y_encoded = label_encoder.fit_transform(y)
 
-# # Encode categorical variables
-X_encoded = pd.get_dummies(X)
-label_encoder = LabelEncoder()
-y_encoded = label_encoder.fit_transform(y)
-
-
-# smote = SMOTE(sampling_strategy='auto',random_state=42)
+# smote = SMOTE(sampling_strategy='auto', random_state=42)
 # X_smote, y_smote = smote.fit_resample(X_encoded, y_encoded)
 
 # # Create oversampled dataset
@@ -187,22 +139,18 @@ y_encoded = label_encoder.fit_transform(y)
 #      pd.DataFrame(label_encoder.inverse_transform(y_smote), columns=['Nutrition Status'])], 
 #     axis=1
 # )
-# df_smote.to_csv('oversampled_data.csv', index=False)
-# df_smote.plot(kind='bar', figsize=(12, 8))
-# print("Oversampled dataset saved as 'oversampled_data.csv'.")
+# # df_smote.to_csv('oversampled_data.csv', index=False)
+# print("Oversampled dataset created.")
 
-df_smote = pd.read_csv('oversampled_data.csv')
+# # Random undersampling
+# tomek = TomekLinks()
+# X_tomek, y_tomek = tomek.fit_resample(X_encoded, y_encoded)
 
-# Random undersampling
-tomek = TomekLinks()
-X_tomek, y_tomek = tomek.fit_resample(X_encoded, y_encoded)
-
-# Create undersampled dataset
-df_tomek = pd.concat(
-    [pd.DataFrame(X_tomek, columns=X_encoded.columns), 
-     pd.DataFrame(label_encoder.inverse_transform(y_tomek), columns=['Nutrition Status'])], 
-    axis=1
-)
-df_tomek.to_csv('undersampled_data.csv', index=False)
-df_tomek.plot(kind='bar', figsize=(12, 8))
-print("Undersampled dataset saved as 'undersampled_data.csv'.")
+# # Create undersampled dataset
+# df_tomek = pd.concat(
+#     [pd.DataFrame(X_tomek, columns=X_encoded.columns), 
+#      pd.DataFrame(label_encoder.inverse_transform(y_tomek), columns=['Nutrition Status'])], 
+#     axis=1
+# )
+# # df_tomek.to_csv('undersampled_data.csv', index=False)
+# print("Undersampled dataset created.")

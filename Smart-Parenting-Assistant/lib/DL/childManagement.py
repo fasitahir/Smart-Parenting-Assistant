@@ -5,6 +5,8 @@ from pymongo import MongoClient
 from bson import ObjectId
 from typing import List
 import os
+from datetime import datetime
+from fastapi.responses import JSONResponse
 
 # MongoDB Connection
 client = MongoClient("mongodb://localhost:27017/")
@@ -42,7 +44,30 @@ def child_serializer(child) -> dict:
 async def add_child(child: ChildModel):
     print(f"Adding child: {child.dict()}")
     result = children_collection.insert_one(child.dict())
+
     print(f"Insert result: {result.inserted_id}")
+    if result is not None:
+        try:
+            print("Adding child initial growth data")
+            if not result.acknowledged:
+                raise HTTPException(status_code=500, detail="Failed to add child")
+
+            # Add initial growth data for the child
+            growth_data = {
+                "child_id": str(result.inserted_id),
+                "date": datetime.utcnow(),
+                "weight": child.weight,
+                "height": child.height,
+                "milestone": "Initial Data"
+            }
+            growth_collection.insert_one(growth_data)
+
+            response_data =  {"message": "Child added successfully"}
+            return JSONResponse(response_data, status_code=201)
+        except Exception as e:
+            print(f"Error adding child: {e}")
+            raise HTTPException(status_code=500, detail="Internal Server Error")
+
 
     return {"message": "Child added successfully!", "id": str(result.inserted_id)}
 

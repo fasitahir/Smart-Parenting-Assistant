@@ -74,77 +74,85 @@ class _AddReminderPageState extends State<AddReminderPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Add Reminder'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              // Title Input Field
-              TextFormField(
-                controller: _titleController,
-                decoration: const InputDecoration(labelText: 'Reminder Title'),
-                validator: (value) =>
-                    value == null || value.isEmpty ? 'Enter a title' : null,
-              ),
-              const SizedBox(height: 20),
-              // Date Picker
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(_selectedDate == null
-                      ? 'No date selected'
-                      : 'Date: ${_selectedDate!.toLocal()}'.split(' ')[0]),
-                  ElevatedButton(
-                    onPressed: () async {
-                      DateTime? date = await showDatePicker(
-                        context: context,
-                        initialDate: DateTime.now(),
-                        firstDate: DateTime.now(),
-                        lastDate: DateTime(2101),
-                      );
-                      if (date != null) {
-                        setState(() => _selectedDate = date);
-                      }
-                    },
-                    child: const Text('Pick Date'),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              // Time Picker
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(_selectedTime == null
-                      ? 'No time selected'
-                      : 'Time: ${_selectedTime!.format(context)}'),
-                  ElevatedButton(
-                    onPressed: () async {
-                      TimeOfDay? time = await showTimePicker(
-                        context: context,
-                        initialTime: TimeOfDay.now(),
-                      );
-                      if (time != null) {
-                        setState(() => _selectedTime = time);
-                      }
-                    },
-                    child: const Text('Pick Time'),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 40),
-              ElevatedButton(
-                onPressed: _saveReminder,
-                child: const Text('Save Reminder'),
-              ),
-            ],
-          ),
+        appBar: AppBar(
+          title: const Text('Add Reminder',
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Plus Jakarta Sans',
+                  color: Colors.white)),
+          backgroundColor: Colors.blueAccent,
         ),
-      ),
-    );
+        body: Container(
+          color: Colors.white,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  // Title Input Field
+                  TextFormField(
+                    controller: _titleController,
+                    decoration:
+                        const InputDecoration(labelText: 'Reminder Title'),
+                    validator: (value) =>
+                        value == null || value.isEmpty ? 'Enter a title' : null,
+                  ),
+                  const SizedBox(height: 20),
+                  // Date Picker
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(_selectedDate == null
+                          ? 'No date selected'
+                          : 'Date: ${_selectedDate!.toLocal()}'.split(' ')[0]),
+                      ElevatedButton(
+                        onPressed: () async {
+                          DateTime? date = await showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime.now(),
+                            lastDate: DateTime(2101),
+                          );
+                          if (date != null) {
+                            setState(() => _selectedDate = date);
+                          }
+                        },
+                        child: const Text('Pick Date'),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  // Time Picker
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(_selectedTime == null
+                          ? 'No time selected'
+                          : 'Time: ${_selectedTime!.format(context)}'),
+                      ElevatedButton(
+                        onPressed: () async {
+                          TimeOfDay? time = await showTimePicker(
+                            context: context,
+                            initialTime: TimeOfDay.now(),
+                          );
+                          if (time != null) {
+                            setState(() => _selectedTime = time);
+                          }
+                        },
+                        child: const Text('Pick Time'),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 40),
+                  ElevatedButton(
+                    onPressed: _saveReminder,
+                    child: const Text('Save Reminder'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ));
   }
 }
